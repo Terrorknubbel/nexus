@@ -7,28 +7,32 @@ import (
 	"strconv"
 	"strings"
 
+	"nexus/internal/config"
 	"nexus/pkg/models"
 )
 
-func Collect() []models.Process {
-	return collectFrom("/proc")
+type BasicCollector struct {
+	cfg *config.Config
 }
 
-func collectFrom(procRoot string) []models.Process {
-	entries, err := os.ReadDir(procRoot)
+func NewBasicCollector(cfg *config.Config) *BasicCollector {
+	return &BasicCollector{cfg: cfg}
+}
+
+func (c *BasicCollector) Collect(processes []models.Process) ([]models.Process, error) {
+	entries, err := os.ReadDir(c.cfg.ProcRoot)
 	if err != nil {
-		return nil
+		return nil, err
 	}
 
-	var processes []models.Process
 	for _, entry := range entries {
-		info, err := readProcessInfo(procRoot, entry)
+		info, err := readProcessInfo(c.cfg.ProcRoot, entry)
 		if err != nil {
 			continue
 		}
 		processes = append(processes, info)
 	}
-	return processes
+	return processes, nil
 }
 
 func readProcessInfo(procRoot string, entry os.DirEntry) (models.Process, error) {

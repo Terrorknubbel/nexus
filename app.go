@@ -2,16 +2,20 @@ package main
 
 import (
 	"context"
+	"nexus/internal/config"
 	"nexus/internal/process"
 	"nexus/pkg/models"
 )
 
 type App struct {
-	ctx context.Context
+	ctx         context.Context
+	procManager *process.Manager
 }
 
 func NewApp() *App {
-	return &App{}
+	cfg := config.NewDefault()
+	procMgr := process.NewManager(cfg)
+	return &App{procManager: procMgr}
 }
 
 func (a *App) startup(ctx context.Context) {
@@ -19,5 +23,9 @@ func (a *App) startup(ctx context.Context) {
 }
 
 func (a *App) GetAllProcesses() []models.Process {
-	return process.Collect()
+	procs, err := a.procManager.CollectAll()
+	if err != nil {
+		panic(err)
+	}
+	return procs
 }
