@@ -18,6 +18,6 @@ func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 }
 
-func (a *App) GetAllProcesses() []models.ProcessInfo {
+func (a *App) GetAllProcesses() []models.Process {
 	return process.Collect()
 }

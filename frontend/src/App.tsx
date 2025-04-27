@@ -4,7 +4,7 @@ import ProcessTable from "./components/ProcessTable";
 import { useEffect, useState } from 'react';
 
 function App() {
-  const [processes, setProcesses] = useState<models.ProcessInfo[]>([]);
+  const [processes, setProcesses] = useState<models.Process[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

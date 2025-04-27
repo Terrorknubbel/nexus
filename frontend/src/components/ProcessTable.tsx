@@ -4,16 +4,16 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import { models } from "../../wailsjs/go/models";
 
 type Props = {
-  processes: models.ProcessInfo[];
+  processes: models.Process[];
 };
 
-const stateIcons: Record<models.ProcessInfo["state"], string> = {
+const stateIcons: Record<models.Process["state"], string> = {
   running: "🟢",
   sleeping: "🟡",
   stopped: "🔴",
 };
 
-type SortKey = keyof models.ProcessInfo;
+type SortKey = keyof models.Process;
 type SortDirection = "asc" | "desc";
 
 const ProcessTable: React.FC<Props> = ({ processes }) => {
