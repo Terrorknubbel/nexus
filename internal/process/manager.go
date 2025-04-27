@@ -24,9 +24,10 @@ func NewManager(cfg *config.Config) *Manager {
 
 func (m *Manager) CollectAll() ([]models.Process, error) {
 	var procs []models.Process
+	var err error
 
 	for _, c := range m.collectors {
-		procs, err := c.Collect(procs)
+		procs, err = c.Collect(procs)
 		if err != nil {
 			return procs, err
 		}
