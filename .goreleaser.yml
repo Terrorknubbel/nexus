@@ -1,0 +1,39 @@
+project_name: nexus
+version: 2
+
+builds:
+  - id: nexus
+    main: .
+    goos:
+      - linux
+    goarch:
+      - amd64
+    env:
+      - CGO_ENABLED=1
+    tags:
+      - production
+      - webkit2_41
+    ldflags:
+      - "-s -w"
+    hooks:
+      pre:
+        - npm ci --prefix frontend
+        - npm run build --prefix frontend
+archives:
+  - id: nexus_linux
+    builds:
+      - nexus
+    format: tar.gz
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    files:
+      - LICENSE
+      - README.md
+      - build/bin/nexus
+      - frontend/dist/**/*
+release:
+  github:
+    owner: Terrorknubbel
+    name: nexus
+changelog:
+  use: git
+

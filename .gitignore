@@ -4,3 +4,4 @@ build/
 wailsjs/
 .vscode/
 .env
+dist
