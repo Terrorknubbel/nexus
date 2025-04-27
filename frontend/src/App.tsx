@@ -1,28 +1,42 @@
-import {useState} from 'react';
-import logo from './assets/images/logo-universal.png';
-import './App.css';
-import {Greet} from "../wailsjs/go/main/App";
+import { GetAllProcesses } from "../wailsjs/go/main/App";
+import { models } from "../wailsjs/go/models";
+import ProcessTable from "./components/ProcessTable";
+import { useEffect, useState } from 'react';
 
 function App() {
-    const [resultText, setResultText] = useState("Please enter your name below 👇");
-    const [name, setName] = useState('');
-    const updateName = (e: any) => setName(e.target.value);
-    const updateResultText = (result: string) => setResultText(result);
+  const [processes, setProcesses] = useState<models.ProcessInfo[]>([]);
+  const [loading, setLoading] = useState(true);
 
-    function greet() {
-        Greet(name).then(updateResultText);
-    }
+  useEffect(() => {
+    // Funktion zum Abrufen der Prozesse
+    const fetchProcesses = () => {
+      GetAllProcesses()
+        .then((data) => {
+          setProcesses(data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error("Fehler beim Laden der Prozesse:", err);
+        });
+    };
 
-    return (
-        <div id="App">
-            <img src={logo} id="logo" alt="logo"/>
-            <div id="result" className="result">{resultText}</div>
-            <div id="input" className="input-box">
-                <input id="name" className="input" onChange={updateName} autoComplete="off" name="input" type="text"/>
-                <button className="btn" onClick={greet}>Greet</button>
-            </div>
-        </div>
-    )
+    // Sofort einmal abrufen
+    fetchProcesses();
+    // Intervall setzen (5000ms = 5s)
+    const intervalId = setInterval(fetchProcesses, 5000);
+
+    // Cleanup: Intervall stoppen, wenn Komponente unmountet
+    return () => clearInterval(intervalId);
+  }, []);
+
+  if (loading) {
+    return <>Loading processes…</>;
+  }
+
+  return (
+    <ProcessTable processes={processes} />
+  );
 }
 
-export default App
+export default App;
+
