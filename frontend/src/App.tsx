@@ -1,10 +1,14 @@
+import { ThemeProvider } from "styled-components";
 import { GetAllProcesses } from "../wailsjs/go/main/App";
 import { models } from "../wailsjs/go/models";
 import ProcessTable from "./components/ProcessTable";
+import Searchbar from "./components/Searchbar";
 import { useEffect, useState } from 'react';
+import theme from "./theme/theme";
 
 function App() {
   const [processes, setProcesses] = useState<models.Process[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -34,7 +38,10 @@ function App() {
   }
 
   return (
-    <ProcessTable processes={processes} />
+    <ThemeProvider theme={theme}>
+      <Searchbar searchTerm={searchTerm} onSearch={setSearchTerm} />
+      <ProcessTable searchTerm={searchTerm} processes={processes} />
+    </ThemeProvider>
   );
 }
 

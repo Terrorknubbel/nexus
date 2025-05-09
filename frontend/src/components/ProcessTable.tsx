@@ -4,6 +4,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import { models } from "../../wailsjs/go/models";
 
 type Props = {
+  searchTerm: string;
   processes: models.Process[];
 };
 
@@ -16,11 +17,9 @@ const stateIcons: Record<models.Process["state"], string> = {
 type SortKey = keyof models.Process;
 type SortDirection = "asc" | "desc";
 
-const ProcessTable: React.FC<Props> = ({ processes }) => {
+const ProcessTable: React.FC<Props> = ({ searchTerm, processes }) => {
   const [sortKey, setSortKey] = useState<SortKey>("pid");
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const [isPaused, setIsPaused] = useState<boolean>(false);
   const [pinnedNames, setPinnedNames] = useState<Set<string>>(new Set());
   const [selectedPid, setSelectedPid] = useState<number | null>(null);
   const [expandedParents, setExpandedParents] = useState<Set<number>>(new Set());
@@ -55,10 +54,6 @@ const ProcessTable: React.FC<Props> = ({ processes }) => {
   };
 
   const isPinned = (name: string) => pinnedNames.has(name);
-
-  const togglePause = () => {
-    setIsPaused((prev) => !prev);
-  };
 
   const handleSort = (key: SortKey) => {
     if (key === sortKey) {
@@ -104,21 +99,6 @@ const ProcessTable: React.FC<Props> = ({ processes }) => {
 
   return (
     <div className="process-container">
-        <div className="search-bar">
-          <button
-            className={`pause-button ${isPaused ? "active" : ""}`}
-            onClick={togglePause}
-            title={isPaused ? "Fortsetzen" : "Pausieren"}
-          >
-            <i className={`bi ${isPaused ? "bi-play-fill" : "bi-pause-fill"}`}></i>
-          </button>
-          <input
-            type="text"
-            placeholder="Suche nach Name, state oder PID..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
         <table className="process-table">
           <thead>
             <tr>
